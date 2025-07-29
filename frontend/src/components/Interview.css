@@ -1,0 +1,125 @@
+/* components/Interview.css */
+
+.interview-fullscreen {
+    width: 100vw;
+    height: 100vh;
+    background: #f5f5fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* 상단 면접관 카드 */
+.interviewers {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1rem;
+}
+
+.interviewer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 110px;
+    transition: transform 0.2s ease;
+}
+
+.interviewer-card.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px rgba(146, 84, 222, 0.2);
+}
+
+.interviewer-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+}
+
+.interviewer-card p {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* 중앙 질문창 */
+.question-display {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    width: 70%;
+    min-height: 120px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-size: 1.2rem;
+    color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 하단 사용자 영역 */
+.user-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-card {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 16px;
+    background: #fff;
+    padding: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 입력창 및 버튼들 */
+.user-input-box {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.user-input-box input {
+    width: 400px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: 0.2s;
+}
+
+.user-input-box input:focus {
+    border-color: #9254de;
+    box-shadow: 0 0 0 3px rgba(146, 84, 222, 0.2);
+}
+
+.user-input-box button {
+    font-size: 1.2rem;
+    padding: 0.75rem 1rem;
+    background-color: #9254de;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.user-input-box button:hover {
+    background-color: #7e3fc4;
+}
