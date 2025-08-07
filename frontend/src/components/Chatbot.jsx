@@ -14,7 +14,8 @@ const Chatbot = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef(null);
     const chatEndRef = useRef(null);
-    const recognitionRef = useRef(null);
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
 
     useEffect(() => {
         setMessages([
@@ -61,42 +62,47 @@ const Chatbot = () => {
         }
     };
 
-    const toggleRecording = () => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+    const toggleRecording = async () => {
+        if (recording) {
+            mediaRecorderRef.current?.stop();
+            setRecording(false);
             return;
         }
 
-        if (!recognitionRef.current) {
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'ko-KR';
-            recognition.interimResults = false;
-            recognition.continuous = false;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+            audioChunksRef.current = [];
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                setInput((prev) => prev + transcript);
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    audioChunksRef.current.push(e.data);
+                }
             };
 
-            recognition.onerror = (event) => {
-                alert('음성 인식 중 오류 발생: ' + event.error);
-                setRecording(false);
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('file', audioBlob, 'voice.webm');
+
+                try {
+                    const res = await fetch('http://localhost:3000/chatbot/stt', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const data = await res.json();
+                    setInput(prev => prev + (data.text || ''));
+                } catch (err) {
+                    alert('❌ 음성 인식 실패: ' + err.message);
+                }
             };
 
-            recognition.onend = () => {
-                setRecording(false);
-            };
-
-            recognitionRef.current = recognition;
-        }
-
-        if (!recording) {
-            recognitionRef.current.start();
+            mediaRecorderRef.current = mediaRecorder;
+            mediaRecorder.start();
             setRecording(true);
-        } else {
-            recognitionRef.current.stop();
-            setRecording(false);
+        } catch (err) {
+            alert('🎤 마이크 접근 실패: ' + err.message);
         }
     };
 

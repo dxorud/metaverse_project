@@ -12,7 +12,7 @@ const upload = multer();
 
 const DIFY_API_KEY = process.env.DIFY_API_KEY;
 
-// 📍 POST /stt - 음성 → 텍스트
+// POST /stt - 음성 → 텍스트
 router.post('/stt', upload.single('file'), async (req, res) => {
     try {
         const buffer = req.file.buffer;
@@ -25,7 +25,7 @@ router.post('/stt', upload.single('file'), async (req, res) => {
     }
 });
 
-// 📍 POST /tts - 텍스트 → 음성
+// POST /tts - 텍스트 → 음성
 router.post('/tts', upload.none(), async (req, res) => {
     try {
         const text = req.body.text;
@@ -42,13 +42,13 @@ router.post('/tts', upload.none(), async (req, res) => {
     }
 });
 
-// 📍 POST /chat - Dify API 호출
+// POST /chat - Dify API 호출
 router.post('/chat', async (req, res) => {
     try {
         const { query, user = 'guest' } = req.body;
 
         const response = await axios.post(
-            'https://api.dify.ai/v1/chat-messages',
+            'http://13.125.60.100/v1/chat-messages',
             {
                 query,
                 user,

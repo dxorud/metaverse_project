@@ -1,8 +1,7 @@
 const axios = require('axios');
-const fs = require('fs');
 const path = require('path');
+const FormData = require('form-data'); // ← 꼭 필요함
 
-// ✅ .env 경로 지정 (최상단에서 한 번만 호출되었으면 생략 가능)
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 const ELEVEN_API_KEY = process.env.ELEVEN_API_KEY;
@@ -14,7 +13,7 @@ const VOICE_IDS = {
     DEFAULT: process.env.VOICE_ID_DEFAULT
 };
 
-// 🟣 1. 텍스트 → 음성 (TTS)
+// 텍스트 → 음성 (TTS)
 async function textToSpeech(text, role = 'DEFAULT') {
     const voiceId = VOICE_IDS[role.toUpperCase()];
     if (!voiceId) throw new Error(`Invalid voice role: ${role}`);
@@ -35,36 +34,44 @@ async function textToSpeech(text, role = 'DEFAULT') {
                     'xi-api-key': ELEVEN_API_KEY,
                     'Content-Type': 'application/json'
                 },
-                responseType: 'arraybuffer' // 중요: binary data 처리
+                responseType: 'arraybuffer'
             }
         );
 
         return response.data; // audio binary buffer 반환
     } catch (error) {
-        throw new Error(`TTS 실패: ${error.response?.status} - ${error.response?.data}`);
+        console.error("TTS 오류:", error.response?.data || error.message);
+        throw new Error(`TTS 실패: ${error.response?.status} - ${JSON.stringify(error.response?.data)}`);
     }
 }
 
-// 🔵 2. 음성 → 텍스트 (STT)
+// 음성 → 텍스트 (STT)
 async function speechToText(buffer, filename) {
     try {
         const formData = new FormData();
-        formData.append('file', new Blob([buffer]), filename); // 또는 `Buffer.from()` 사용 가능
+        formData.append('file', buffer, {
+            filename,
+            contentType: 'audio/webm'
+        });
+
+        // ElevenLabs STT는 model_id 필수!
+        formData.append('model_id', 'scribe_v1');
 
         const response = await axios.post(
-            'https://api.elevenlabs.io/v1/audio-to-text',
+            'https://api.elevenlabs.io/v1/speech-to-text',
             formData,
             {
                 headers: {
                     'xi-api-key': ELEVEN_API_KEY,
-                    ...formData.getHeaders?.() || {} // node-fetch or axios+form-data compatibility
+                    ...formData.getHeaders()
                 }
             }
         );
 
         return response.data.text || '';
     } catch (error) {
-        throw new Error(`[STT 실패] ${error.response?.status}: ${error.response?.data}`);
+        console.error("STT 오류:", error.response?.data || error.message);
+        throw new Error(`[STT 실패] ${error.response?.status}: ${JSON.stringify(error.response?.data)}`);
     }
 }
 

@@ -23,14 +23,17 @@
 
 .modal-box h2 {
     font-size: 1.6rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1.2rem;
     color: #333;
 }
 
-.modal-box p {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: #555;
+.modal-box label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #444;
+    text-align: left;
+    margin: 0.8rem 0 0.3rem 0;
 }
 
 .modal-box input {
@@ -39,7 +42,6 @@
     font-size: 1rem;
     border-radius: 8px;
     border: 2px solid #d4bfff;
-    margin-bottom: 1rem;
     outline: none;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -59,16 +61,25 @@
     background-color: #9254de;
     color: white;
     cursor: pointer;
+    margin-top: 1.2rem;
     transition: background-color 0.2s ease;
 }
 
 .modal-box button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+    color: #eee;
 }
 
 .modal-box button:hover:not(:disabled) {
     background-color: #7e3fc4;
+}
+
+.modal-warning {
+    color: #e53935;
+    font-size: 14px;
+    text-align: left;
+    margin-top: 0.5rem;
 }
 
 @keyframes fadeInUp {
